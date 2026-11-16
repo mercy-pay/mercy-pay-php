@@ -137,4 +137,12 @@ final class ClientTest extends TestCase
 
         self::assertSame('https://api.test/api/v1/customers/cus_1%2F..%2Fx', $this->http->requests[0]['url']);
     }
+
+    public function test_services_are_also_methods(): void
+    {
+        self::assertSame($this->mercyPay->payments, $this->mercyPay->payments());
+
+        $this->expectException(\BadMethodCallException::class);
+        $this->mercyPay->apiKey();
+    }
 }

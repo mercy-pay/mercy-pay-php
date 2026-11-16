@@ -11,6 +11,7 @@ use MercyPay\Exception\ApiErrorException;
 use MercyPay\HttpClient\ClientInterface;
 use MercyPay\HttpClient\CurlClient;
 use MercyPay\HttpClient\Response;
+use MercyPay\Service\AbstractService;
 use MercyPay\Service\AccountService;
 use MercyPay\Service\BillingPortalService;
 use MercyPay\Service\CheckoutSessionService;
@@ -130,6 +131,21 @@ final class MercyPayClient
         $this->wallets = new WalletService($this);
         $this->walletTransfers = new WalletTransferService($this);
         $this->webhookEndpoints = new WebhookEndpointService($this);
+    }
+
+    /**
+     * The services as methods too, $mercyPay->payments() as well as $mercyPay->payments: what a
+     * Laravel facade needs (MercyPay::payments()->create(…)).
+     *
+     * @param  array<int, mixed>  $arguments
+     */
+    public function __call(string $name, array $arguments): AbstractService
+    {
+        if (property_exists($this, $name) && $this->{$name} instanceof AbstractService) {
+            return $this->{$name};
+        }
+
+        throw new \BadMethodCallException("MercyPayClient n'a pas de service {$name}.");
     }
 
     /**
