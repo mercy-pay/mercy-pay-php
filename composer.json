@@ -1,0 +1,41 @@
+{
+    "name": "mercy-pay/mercy-pay-php",
+    "description": "Bibliothèque PHP officielle de l'API Mercy Pay : paiements mobile money et carte en Afrique.",
+    "type": "library",
+    "keywords": [
+        "mercy pay",
+        "paiement",
+        "mobile money",
+        "afrique",
+        "api"
+    ],
+    "homepage": "https://docs.mercy-pay.com",
+    "license": "MIT",
+    "support": {
+        "docs": "https://docs.mercy-pay.com",
+        "source": "https://github.com/mercy-pay/mercy-pay-php",
+        "issues": "https://github.com/mercy-pay/mercy-pay-php/issues"
+    },
+    "require": {
+        "php": "^8.2",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MercyPay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MercyPay\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
+}
