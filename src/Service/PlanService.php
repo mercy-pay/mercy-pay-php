@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,24 +12,24 @@ use MercyPay\Page;
 final class PlanService extends AbstractService
 {
     /**
-     * Crée un plan d'abonnement.
+     * Créer un plan.
      *
      * POST /api/v1/plans
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{name: string, amount: int, currency: string, interval: 'daily'|'weekly'|'monthly'|'yearly', interval_count?: int, trial_period_days?: int, description?: string, portal_switchable?: bool, metadata?: array<string, mixed>|null}  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function create(array $params = [], array $options = []): MercyPayObject
+    public function create(array $params, array $options = []): MercyPayObject
     {
         return $this->object('POST', 'plans', $params, $options);
     }
 
     /**
-     * Les plans.
+     * Lister les plans.
      *
      * GET /api/v1/plans
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{status?: 'active'|'archived', limit?: int, starting_after?: string, ending_before?: string, created?: array{gte?: string, lte?: string}}  $params
      */
     public function all(array $params = []): Page
     {
@@ -35,7 +37,7 @@ final class PlanService extends AbstractService
     }
 
     /**
-     * Un plan.
+     * Lire un plan.
      *
      * GET /api/v1/plans/{id}
      *
@@ -47,11 +49,11 @@ final class PlanService extends AbstractService
     }
 
     /**
-     * Modifie un plan.
+     * Modifier un plan.
      *
      * PATCH /api/v1/plans/{id}
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{name?: string, description?: string|null, portal_switchable?: bool, metadata?: array<string, mixed>|null}  $params
      */
     public function update(string $id, array $params = []): MercyPayObject
     {
@@ -59,36 +61,40 @@ final class PlanService extends AbstractService
     }
 
     /**
-     * Supprime un plan jamais utilisé.
+     * Supprimer un plan.
      *
      * DELETE /api/v1/plans/{id}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function delete(string $id): MercyPayObject
+    public function delete(string $id, array $params = []): MercyPayObject
     {
-        return $this->object('DELETE', 'plans/'.self::id($id));
+        return $this->object('DELETE', 'plans/'.self::id($id), $params);
     }
 
     /**
-     * Archive un plan.
+     * Archiver un plan.
      *
      * POST /api/v1/plans/{id}/archive
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function archive(string $id, array $options = []): MercyPayObject
+    public function archive(string $id, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'plans/'.self::id($id).'/archive', [], $options);
+        return $this->object('POST', 'plans/'.self::id($id).'/archive', $params, $options);
     }
 
     /**
-     * Réactive un plan archivé.
+     * Réactiver un plan.
      *
      * POST /api/v1/plans/{id}/restore
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function restore(string $id, array $options = []): MercyPayObject
+    public function restore(string $id, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'plans/'.self::id($id).'/restore', [], $options);
+        return $this->object('POST', 'plans/'.self::id($id).'/restore', $params, $options);
     }
 }

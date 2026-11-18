@@ -100,9 +100,47 @@ new MercyPayClient($apiKey, [
 ]);
 ```
 
+## Paramètres décrits
+
+Chaque méthode décrit les clés que l'API accepte, en forme de tableau PHPDoc : PhpStorm les propose, et PHPStan signale une clé obligatoire oubliée ou une valeur inconnue. Les opérateurs, les pays et les types d'événements sont dans `MercyPay\Catalog` :
+
+```php
+use MercyPay\Catalog;
+
+$mercyPay->payments->create([
+    'amount' => 1000,
+    'currency' => 'XAF',
+    'country' => 'CMR',
+    'provider' => Catalog::MTN_MOMO_CMR,
+    'phone' => '237653456789',
+], ['idempotency_key' => 'order-4821']);
+```
+
+## Attendre le résultat
+
+Pour un script ou un test, attendez qu'un paiement ait un statut final :
+
+```php
+$payment = $mercyPay->payments->waitForFinalStatus($id, ['timeout' => 60_000]);
+$session = $mercyPay->checkoutSessions->waitForCompletion($sessionId);
+```
+
+La lecture se répète, de plus en plus espacée. Passé le délai, `WaitTimeoutException` donne le dernier état dans `$last`. Sur un serveur en production, préférez le webhook `payment.succeeded`.
+
 ## Sandbox
 
-Une clé `mp_sandbox_…` ne touche pas à l'argent réel. `$mercyPay->testHelpers->triggerEvent(['type' => 'payment.succeeded'])` envoie un événement de test à vos endpoints. La [CLI](https://docs.mercy-pay.com/developers/cli) relaie les webhooks vers votre ordinateur.
+Une clé `mp_sandbox_…` ne touche pas à l'argent réel.
+
+```php
+// Le numéro de test qui produit ce résultat :
+$phone = $mercyPay->testHelpers->mobileMoneyNumber(Catalog::ORANGE_CMR, 'insufficient_balance');
+```
+
+Les résultats possibles : `succeeded`, `pending`, `payout_failed`, ou un `failure_code` comme `insufficient_balance`. `$mercyPay->testHelpers->triggerEvent(['type' => 'payment.succeeded'])` envoie un événement de test à vos endpoints. La [CLI](https://docs.mercy-pay.com/developers/cli) relaie les webhooks vers votre ordinateur.
+
+## Développement
+
+`vendor/bin/phpunit` lance les tests, sans réseau. `tests/fixtures/openapi.json` est une copie de la référence de l'API : `python3 scripts/generate.py` régénère les services et le catalogue, et un test vérifie que chaque endpoint a sa méthode.
 
 ## Documentation
 

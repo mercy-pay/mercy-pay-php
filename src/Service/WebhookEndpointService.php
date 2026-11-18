@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,24 +12,24 @@ use MercyPay\Page;
 final class WebhookEndpointService extends AbstractService
 {
     /**
-     * Enregistre un endpoint.
+     * Créer un endpoint.
      *
      * POST /api/v1/webhook_endpoints
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{url: string, events: list<string>, environment?: 'sandbox'|'live'|null}  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function create(array $params = [], array $options = []): MercyPayObject
+    public function create(array $params, array $options = []): MercyPayObject
     {
         return $this->object('POST', 'webhook_endpoints', $params, $options);
     }
 
     /**
-     * Les endpoints.
+     * Lister les endpoints.
      *
      * GET /api/v1/webhook_endpoints
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{limit?: int, starting_after?: string, ending_before?: string}  $params
      */
     public function all(array $params = []): Page
     {
@@ -35,21 +37,23 @@ final class WebhookEndpointService extends AbstractService
     }
 
     /**
-     * Un endpoint.
+     * Lire un endpoint.
      *
      * GET /api/v1/webhook_endpoints/{id}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function retrieve(string $id): MercyPayObject
+    public function retrieve(string $id, array $params = []): MercyPayObject
     {
-        return $this->object('GET', 'webhook_endpoints/'.self::id($id));
+        return $this->object('GET', 'webhook_endpoints/'.self::id($id), $params);
     }
 
     /**
-     * Modifie un endpoint.
+     * Modifier un endpoint.
      *
      * PATCH /api/v1/webhook_endpoints/{id}
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{url?: string, events?: list<string>, environment?: 'sandbox'|'live'|null, status?: 'enabled'|'disabled'}  $params
      */
     public function update(string $id, array $params = []): MercyPayObject
     {
@@ -57,36 +61,40 @@ final class WebhookEndpointService extends AbstractService
     }
 
     /**
-     * Supprime un endpoint.
+     * Supprimer un endpoint.
      *
      * DELETE /api/v1/webhook_endpoints/{id}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function delete(string $id): MercyPayObject
+    public function delete(string $id, array $params = []): MercyPayObject
     {
-        return $this->object('DELETE', 'webhook_endpoints/'.self::id($id));
+        return $this->object('DELETE', 'webhook_endpoints/'.self::id($id), $params);
     }
 
     /**
-     * Change le secret ; l'ancien reste valable 24 heures.
+     * Changer le secret.
      *
      * POST /api/v1/webhook_endpoints/{id}/rotate_secret
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function rotateSecret(string $id, array $options = []): MercyPayObject
+    public function rotateSecret(string $id, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'webhook_endpoints/'.self::id($id).'/rotate_secret', [], $options);
+        return $this->object('POST', 'webhook_endpoints/'.self::id($id).'/rotate_secret', $params, $options);
     }
 
     /**
-     * Envoie un événement webhook.test à cet endpoint.
+     * Envoyer un test.
      *
      * POST /api/v1/webhook_endpoints/{id}/test
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function test(string $id, array $options = []): MercyPayObject
+    public function test(string $id, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'webhook_endpoints/'.self::id($id).'/test', [], $options);
+        return $this->object('POST', 'webhook_endpoints/'.self::id($id).'/test', $params, $options);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MercyPay\Service;
 
+use MercyPay\Exception\WaitTimeoutException;
 use MercyPay\MercyPayClient;
 use MercyPay\MercyPayObject;
 use MercyPay\Page;
@@ -42,6 +43,33 @@ abstract class AbstractService
             fn (array $next): Page => $this->list($path, $next),
             $params,
         );
+    }
+
+    /**
+     * Reads again, a little more spaced each time, until the status is final or the timeout
+     * passes.
+     *
+     * @param  callable(): MercyPayObject  $read
+     * @param  list<string>  $final
+     * @param  array{timeout?: int, interval?: int}  $options
+     */
+    protected function poll(callable $read, array $final, array $options, string $what): MercyPayObject
+    {
+        $deadline = hrtime(true) / 1e6 + ($options['timeout'] ?? 120_000);
+        $delay = $options['interval'] ?? 2_000;
+        $current = $read();
+
+        while (! in_array($current['status'], $final, true)) {
+            if (hrtime(true) / 1e6 + $delay > $deadline) {
+                throw new WaitTimeoutException("{$what} n'a pas atteint de statut final à temps (statut : ".$current['status'].').', $current);
+            }
+
+            $this->client->pause($delay);
+            $delay = min((int) round($delay * 1.5), 10_000);
+            $current = $read();
+        }
+
+        return $current;
     }
 
     protected static function id(string $id): string

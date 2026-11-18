@@ -60,6 +60,9 @@ final class Page implements Countable, IteratorAggregate
         }
     }
 
+    /**
+     * @return ArrayIterator<int, MercyPayObject>
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->data);

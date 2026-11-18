@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,11 +12,11 @@ use MercyPay\Page;
 final class EventService extends AbstractService
 {
     /**
-     * Les événements du compte.
+     * Lister les événements.
      *
      * GET /api/v1/events
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{type?: string, limit?: int, starting_after?: string, ending_before?: string}  $params
      */
     public function all(array $params = []): Page
     {
@@ -22,21 +24,23 @@ final class EventService extends AbstractService
     }
 
     /**
-     * Un événement.
+     * Lire un événement.
      *
      * GET /api/v1/events/{id}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function retrieve(string $id): MercyPayObject
+    public function retrieve(string $id, array $params = []): MercyPayObject
     {
-        return $this->object('GET', 'events/'.self::id($id));
+        return $this->object('GET', 'events/'.self::id($id), $params);
     }
 
     /**
-     * Les envois d'un événement à vos endpoints.
+     * Lister les envois d'un événement.
      *
      * GET /api/v1/events/{id}/deliveries
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{limit?: int, starting_after?: string, ending_before?: string}  $params
      */
     public function deliveries(string $id, array $params = []): Page
     {
@@ -44,14 +48,14 @@ final class EventService extends AbstractService
     }
 
     /**
-     * Renvoie un événement à vos endpoints.
+     * Renvoyer un événement.
      *
      * POST /api/v1/events/{id}/resend
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{webhook_endpoint: string}  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function resend(string $id, array $params = [], array $options = []): MercyPayObject
+    public function resend(string $id, array $params, array $options = []): MercyPayObject
     {
         return $this->object('POST', 'events/'.self::id($id).'/resend', $params, $options);
     }

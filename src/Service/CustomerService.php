@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,24 +12,24 @@ use MercyPay\Page;
 final class CustomerService extends AbstractService
 {
     /**
-     * Crée un client.
+     * Créer un client.
      *
      * POST /api/v1/customers
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{email: string, name?: string|null, metadata?: array<string, mixed>}  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function create(array $params = [], array $options = []): MercyPayObject
+    public function create(array $params, array $options = []): MercyPayObject
     {
         return $this->object('POST', 'customers', $params, $options);
     }
 
     /**
-     * Les clients.
+     * Lister les clients.
      *
      * GET /api/v1/customers
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{email?: string, limit?: int, starting_after?: string, ending_before?: string, created?: array{gte?: string, lte?: string}}  $params
      */
     public function all(array $params = []): Page
     {
@@ -35,7 +37,7 @@ final class CustomerService extends AbstractService
     }
 
     /**
-     * Un client.
+     * Lire un client.
      *
      * GET /api/v1/customers/{id}
      *
@@ -47,11 +49,11 @@ final class CustomerService extends AbstractService
     }
 
     /**
-     * Modifie un client.
+     * Modifier un client.
      *
      * PATCH /api/v1/customers/{id}
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{email?: string, name?: string|null, metadata?: array<string, mixed>}  $params
      */
     public function update(string $id, array $params = []): MercyPayObject
     {
@@ -59,21 +61,23 @@ final class CustomerService extends AbstractService
     }
 
     /**
-     * Supprime un client.
+     * Supprimer un client.
      *
      * DELETE /api/v1/customers/{id}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function delete(string $id): MercyPayObject
+    public function delete(string $id, array $params = []): MercyPayObject
     {
-        return $this->object('DELETE', 'customers/'.self::id($id));
+        return $this->object('DELETE', 'customers/'.self::id($id), $params);
     }
 
     /**
-     * Les moyens de paiement enregistrés d'un client.
+     * Moyens de paiement d'un client.
      *
-     * GET /api/v1/customers/{id}/payment_methods
+     * GET /api/v1/customers/{customer}/payment_methods
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{limit?: int, starting_after?: string, ending_before?: string, created?: array{gte?: string, lte?: string}}  $params
      */
     public function paymentMethods(string $customerId, array $params = []): Page
     {
@@ -81,24 +85,27 @@ final class CustomerService extends AbstractService
     }
 
     /**
-     * Choisit le moyen de paiement par défaut.
+     * Choisir le moyen par défaut.
      *
-     * POST /api/v1/customers/{id}/payment_methods/{id}/default
+     * POST /api/v1/customers/{customer}/payment_methods/{payment_method}/default
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function setDefaultPaymentMethod(string $customerId, string $paymentMethodId, array $options = []): MercyPayObject
+    public function setDefaultPaymentMethod(string $customerId, string $paymentMethodId, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'customers/'.self::id($customerId).'/payment_methods/'.self::id($paymentMethodId).'/default', [], $options);
+        return $this->object('POST', 'customers/'.self::id($customerId).'/payment_methods/'.self::id($paymentMethodId).'/default', $params, $options);
     }
 
     /**
-     * Retire un moyen de paiement.
+     * Retirer un moyen de paiement.
      *
-     * DELETE /api/v1/customers/{id}/payment_methods/{id}
+     * DELETE /api/v1/customers/{customer}/payment_methods/{payment_method}
+     *
+     * @param  array<string, mixed>  $params
      */
-    public function removePaymentMethod(string $customerId, string $paymentMethodId): MercyPayObject
+    public function removePaymentMethod(string $customerId, string $paymentMethodId, array $params = []): MercyPayObject
     {
-        return $this->object('DELETE', 'customers/'.self::id($customerId).'/payment_methods/'.self::id($paymentMethodId));
+        return $this->object('DELETE', 'customers/'.self::id($customerId).'/payment_methods/'.self::id($paymentMethodId), $params);
     }
 }

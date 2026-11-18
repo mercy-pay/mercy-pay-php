@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,11 +12,11 @@ use MercyPay\Page;
 final class RefundService extends AbstractService
 {
     /**
-     * Les remboursements.
+     * Lister les remboursements.
      *
      * GET /api/v1/refunds
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{payment?: string, status?: 'pending'|'processing'|'succeeded'|'failed'|'canceled'}  $params
      */
     public function all(array $params = []): Page
     {
@@ -22,7 +24,7 @@ final class RefundService extends AbstractService
     }
 
     /**
-     * Un remboursement.
+     * Lire un remboursement.
      *
      * GET /api/v1/refunds/{id}
      *
@@ -34,14 +36,15 @@ final class RefundService extends AbstractService
     }
 
     /**
-     * Annule un remboursement pas encore parti.
+     * Annuler un remboursement retardé.
      *
      * POST /api/v1/refunds/{id}/cancel
      *
+     * @param  array<string, mixed>  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function cancel(string $id, array $options = []): MercyPayObject
+    public function cancel(string $id, array $params = [], array $options = []): MercyPayObject
     {
-        return $this->object('POST', 'refunds/'.self::id($id).'/cancel', [], $options);
+        return $this->object('POST', 'refunds/'.self::id($id).'/cancel', $params, $options);
     }
 }

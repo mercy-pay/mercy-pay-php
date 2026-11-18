@@ -34,7 +34,7 @@ final class ContractTest extends TestCase
                 $property = lcfirst(self::pluralService($operation['service']));
                 $ids = array_map(fn (string $name): string => 'id_'.$name, $operation['ids']);
 
-                $client->{$property}->{$operation['method']}(...$ids);
+                $client->{$property}->{$operation['method']}(...[...$ids, []]);
 
                 $expectedPath = preg_replace_callback('/\{[^}]+\}/', function () use (&$ids): string {
                     return array_shift($ids);

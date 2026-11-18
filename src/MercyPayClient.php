@@ -16,6 +16,7 @@ use MercyPay\Service\AccountService;
 use MercyPay\Service\BillingPortalService;
 use MercyPay\Service\CheckoutSessionService;
 use MercyPay\Service\CustomerService;
+use MercyPay\Service\EmbedDomainService;
 use MercyPay\Service\EventService;
 use MercyPay\Service\FeeService;
 use MercyPay\Service\InvoiceService;
@@ -44,7 +45,7 @@ use MercyPay\Service\WebhookEndpointService;
  */
 final class MercyPayClient
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.2.0';
 
     public const DEFAULT_BASE_URL = 'https://mercy-pay.com';
 
@@ -55,6 +56,8 @@ final class MercyPayClient
     public readonly CheckoutSessionService $checkoutSessions;
 
     public readonly CustomerService $customers;
+
+    public readonly EmbedDomainService $embedDomains;
 
     public readonly EventService $events;
 
@@ -116,6 +119,7 @@ final class MercyPayClient
         $this->billingPortal = new BillingPortalService($this);
         $this->checkoutSessions = new CheckoutSessionService($this);
         $this->customers = new CustomerService($this);
+        $this->embedDomains = new EmbedDomainService($this);
         $this->events = new EventService($this);
         $this->fees = new FeeService($this);
         $this->invoices = new InvoiceService($this);
@@ -131,6 +135,16 @@ final class MercyPayClient
         $this->wallets = new WalletService($this);
         $this->walletTransfers = new WalletTransferService($this);
         $this->webhookEndpoints = new WebhookEndpointService($this);
+    }
+
+    /**
+     * Waits between two reads (waitForFinalStatus). Replaced in tests.
+     *
+     * @internal
+     */
+    public function pause(int $milliseconds): void
+    {
+        ($this->sleep)($milliseconds);
     }
 
     /**

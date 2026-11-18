@@ -1,5 +1,7 @@
 <?php
 
+// Généré par scripts/generate.py depuis la référence de l'API. Ne pas modifier à la main.
+
 declare(strict_types=1);
 
 namespace MercyPay\Service;
@@ -10,24 +12,24 @@ use MercyPay\Page;
 final class PayoutService extends AbstractService
 {
     /**
-     * Demande un retrait.
+     * Demander un retrait.
      *
      * POST /api/v1/payouts
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{amount: int, currency: string, destination_id?: string, destination?: array{type: 'mobile_money', country: string, provider: string, phone: string}, metadata?: array<string, mixed>}  $params
      * @param  array{idempotency_key?: string}  $options
      */
-    public function create(array $params = [], array $options = []): MercyPayObject
+    public function create(array $params, array $options = []): MercyPayObject
     {
         return $this->object('POST', 'payouts', $params, $options);
     }
 
     /**
-     * Les retraits.
+     * Lister les retraits.
      *
      * GET /api/v1/payouts
      *
-     * @param  array<string, mixed>  $params
+     * @param  array{status?: 'requested'|'approved'|'processing'|'paid'|'failed'|'rejected'|'canceled', currency?: string, from?: string, to?: string, limit?: int, starting_after?: string, ending_before?: string, created?: array{gte?: string, lte?: string}}  $params
      */
     public function all(array $params = []): Page
     {
@@ -35,7 +37,7 @@ final class PayoutService extends AbstractService
     }
 
     /**
-     * Un retrait.
+     * Lire un retrait.
      *
      * GET /api/v1/payouts/{id}
      *
